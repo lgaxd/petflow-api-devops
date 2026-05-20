@@ -4,8 +4,10 @@ services:
     container_name: h2db
     ports:
       - "81:81"
+      - "1521:1521"
     volumes:
       - h2-data:/opt/h2-data
+    command: -ifNotExists
     networks:
       - petflow-network
 
