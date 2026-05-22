@@ -1,32 +1,35 @@
-# 🐾 PetFlow API
+# 🐾 PetFlow API — DevOps & Cloud Computing
 
 [![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://adoptium.net/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Oracle](https://img.shields.io/badge/Oracle-Database-red.svg)](https://www.oracle.com/database/)
+[![H2](https://img.shields.io/badge/H2-Database-blue.svg)](https://www.h2database.com/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg)](https://www.docker.com/)
+[![Azure](https://img.shields.io/badge/Azure-Cloud-0078D4.svg)](https://azure.microsoft.com/)
 [![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D.svg)](https://swagger.io/)
+
+---
 
 ## 📋 Sumário
 
 - [Sobre o Projeto](#-sobre-o-projeto)
 - [Equipe](#-equipe)
-- [Objetivo do Challenge](#-objetivo-do-challenge)
 - [Tecnologias Utilizadas](#️-tecnologias-utilizadas)
-- [Arquitetura do Projeto](#-arquitetura-do-projeto)
-- [Requisitos Técnicos Atendidos](#-requisitos-técnicos-atendidos)
-- [Visão de Domínio](#-vis%C3%A3o-de-dom%C3%ADnio)
-- [Endpoints da API](#-endpoints-da-api)
-- [Banco de Dados](#️-banco-de-dados)
-- [Swagger / OpenAPI](#-swagger--openapi)
-- [Como Executar](#-como-executar)
-- [Testes da API](#-testes-da-api)
-- [Documentação Complementar](#-documenta%C3%A7%C3%A3o-complementar)
-- [Observações Finais](#-observa%C3%A7%C3%B5es-finais)
+- [Arquitetura Macro na Nuvem](#️-arquitetura-macro-na-nuvem)
+- [Visão de Domínio](#-visão-de-domínio)
+- [Instalação da Solução (How To)](#-instalação-da-solução-how-to)
+- [Remoção dos Recursos na Nuvem](#️-remoção-dos-recursos-na-nuvem)
+- [Demonstração em Vídeo](#-demonstração-em-vídeo)
+- [Observações Finais](#-observações-finais)
+
+---
 
 ## 📌 Sobre o Projeto
 
-O **PetFlow** é uma API REST desenvolvida em Java com Spring Boot para gerenciamento de saúde preventiva pet. A solução gamifica o cuidado com o pet: eventos de saúde concluídos geram pontos para o tutor, que podem ser trocados por cupons de desconto em clínicas parceiras.
+O **PetFlow** é uma API REST desenvolvida em Java com Spring Boot para gerenciamento de saúde preventiva pet. A solução gamifica o cuidado com os animais: eventos de saúde concluídos geram pontos para o tutor, que podem ser trocados por cupons de desconto em clínicas veterinárias parceiras.
 
-O foco do projeto é demonstrar uma aplicação backend organizada em camadas, com persistência relacional, validação de dados, documentação automática e boas práticas de APIs RESTful.
+Nesta entrega de **DevOps & Cloud Computing**, a aplicação foi conteinerizada com Docker e implantada em uma Máquina Virtual Linux na Azure, com banco de dados H2 persistido em volume nomeado e acesso externo via porta 8080.
+
+---
 
 ## 👥 Equipe
 
@@ -37,250 +40,205 @@ O foco do projeto é demonstrar uma aplicação backend organizada em camadas, c
 | Pedro Peres Benitez | 561792 |
 | Lucca Ramos Mussumecci | 562027 |
 
-**Turma:** 2TDSPX
+**Turma:** 2TDSPX — FIAP
 
-## 🎯 Objetivo do Challenge
-
-Desenvolver uma solução utilizando Java e Spring Boot capaz de:
-
-- persistir dados em banco relacional;
-- gerenciar informações de saúde pet;
-- aplicar conceitos de Programação Orientada a Objetos;
-- utilizar JPA e relacionamentos entre entidades;
-- garantir validações e tratamento de exceções;
-- respeitar os fundamentos de APIs REST;
-- disponibilizar documentação da API;
-- atender aos requisitos técnicos da disciplina Java Advanced.
+---
 
 ## 🛠️ Tecnologias Utilizadas
 
-- Java 21
-- Spring Boot
-- Spring Data JPA
-- Spring Validation
-- Spring Cache
-- Oracle Database
-- H2 Database
-- Lombok
-- Swagger / OpenAPI
-- Maven
+| Tecnologia | Uso |
+|---|---|
+| Java 21 | Linguagem principal |
+| Spring Boot | Framework da aplicação |
+| Spring Data JPA | Persistência e ORM |
+| Spring Validation | Validação de dados |
+| Spring Cache | Cache em memória |
+| H2 Database | Banco de dados conteinerizado |
+| Lombok | Redução de boilerplate |
+| Swagger / OpenAPI | Documentação automática da API |
+| Maven | Gerenciamento de dependências e build |
+| Docker / Docker Compose | Conteinerização da aplicação e banco |
+| Azure CLI | Provisionamento de infraestrutura na nuvem |
+| Ubuntu 24.04 LTS (Azure VM) | Sistema operacional da VM |
 
-## 🧱 Arquitetura do Projeto
+---
 
-O projeto segue uma arquitetura em camadas:
+## 🏗️ Arquitetura Macro na Nuvem
 
-```text
-src/main/java/br/com/petflow/petflow_api/
-├── config/
-├── controller/
-├── dto/
-├── entity/
-├── enums/
-├── exception/
-├── repository/
-├── service/
-└── PetflowApiApplication.java
+> 📸 **Diagrama de Arquitetura**
+>
+>
+> ![Diagrama de Arquitetura](Diagrama-DevOps.png)
+
+A solução é composta pelos seguintes elementos na nuvem:
+
+```
+[Usuário / Tester]
+       │
+       │  HTTP :8080
+       ▼
+[Azure VM — Ubuntu 24.04 LTS]
+  ├── Container: petflow-api  (porta 8080)
+  │       └── Spring Boot + Java 21
+  │               └── conecta via TCP ao banco
+  └── Container: h2db  (porta 1521)
+          └── H2 Database Server
+                  └── Volume nomeado: h2-data
+                          └── /opt/h2-data (persistência física)
+
+[Rede interna Docker: petflow-network]
 ```
 
-## ✅ Requisitos Técnicos Atendidos
-
-A solução contempla os requisitos obrigatórios da disciplina:
-
-- Bean Validation
-- Paginação de resultados
-- Ordenação de resultados
-- Busca com parâmetros
-- Cache com `@Cacheable`
-- Tratamento global de exceções
-- Utilização de DTOs
-- Documentação com Swagger/OpenAPI
-- Relacionamentos JPA
-- API RESTful
+**Fluxo resumido:**
+1. O usuário acessa a API externamente pelo IP público da VM na porta `8080`.
+2. O container `petflow-api` processa a requisição e se comunica com o container `h2db` via rede Docker interna (`petflow-network`) na porta `1521`.
+3. O banco H2 persiste os dados no volume nomeado `h2-data`, garantindo que os dados sobrevivam a reinicializações dos containers.
 
 ---
 
 ## 🧠 Visão de Domínio
 
-### 👤 Tutores
-Gerencia os responsáveis pelos pets.
-
-### 🐾 Pets
-Armazena os dados principais dos animais cadastrados e seu vínculo com o tutor.
-
-### 🏥 Clínicas
-Representa as clínicas veterinárias parceiras do sistema.
-
-### 📄 Planos
-Controla os planos de saúde/prevenção ligados às clínicas.
-
-### 📅 Assinaturas
-Registra a contratação de planos por pets.
-
-### ❤️ Eventos de Saúde
-Armazena o histórico clínico e preventivo dos pets.
-
-### 🎟️ Cupons
-Gerencia cupons emitidos para resgate.
-
-### 🎫 Resgates
-Registra o uso de cupons pelos tutores.
+| Entidade | Descrição |
+|---|---|
+| **Tutores** | Responsáveis pelos pets cadastrados no sistema |
+| **Pets** | Animais vinculados a um tutor |
+| **Clínicas** | Clínicas veterinárias parceiras |
+| **Planos** | Planos de saúde/prevenção vinculados às clínicas |
+| **Assinaturas** | Contratação de planos por pets |
+| **Eventos de Saúde** | Histórico clínico e preventivo dos pets |
+| **Cupons** | Cupons de desconto emitidos por pontuação |
+| **Resgates** | Registro do uso de cupons pelos tutores |
 
 ---
 
 ## 📦 Endpoints da API
 
-### 👤 Tutores
+A API segue o padrão RESTful com operações CRUD completas. Acesse a documentação interativa em:
 
-| Método | Endpoint |
-| --- | --- |
-| GET | `/tutors` |
-| GET | `/tutors/{id}` |
-| POST | `/tutors` |
-| PUT | `/tutors/{id}` |
-| DELETE | `/tutors/{id}` |
-
-### 🐾 Pets
-
-| Método | Endpoint |
-| --- | --- |
-| GET | `/pets` |
-| GET | `/pets/{id}` |
-| POST | `/pets` |
-| PUT | `/pets/{id}` |
-| DELETE | `/pets/{id}` |
-
-### 🏥 Clínicas
-
-| Método | Endpoint |
-| --- | --- |
-| GET | `/clinics` |
-| GET | `/clinics/{id}` |
-| POST | `/clinics` |
-| PUT | `/clinics/{id}` |
-| DELETE | `/clinics/{id}` |
-
-### 📄 Planos
-
-| Método | Endpoint |
-| --- | --- |
-| GET | `/plans` |
-| GET | `/plans/{id}` |
-| POST | `/plans` |
-| PUT | `/plans/{id}` |
-| DELETE | `/plans/{id}` |
-
-### 📅 Assinaturas
-
-| Método | Endpoint |
-| --- | --- |
-| GET | `/subscriptions` |
-| GET | `/subscriptions/{id}` |
-| POST | `/subscriptions` |
-| PUT | `/subscriptions/{id}` |
-| DELETE | `/subscriptions/{id}` |
-
-### ❤️ Eventos de Saúde
-
-| Método | Endpoint |
-| --- | --- |
-| GET | `/health-events` |
-| GET | `/health-events/{id}` |
-| POST | `/health-events` |
-| PUT | `/health-events/{id}` |
-| DELETE | `/health-events/{id}` |
-
-### 🎟️ Cupons
-
-| Método | Endpoint |
-| --- | --- |
-| GET | `/coupons` |
-| GET | `/coupons/{id}` |
-| POST | `/coupons` |
-| PUT | `/coupons/{id}` |
-| DELETE | `/coupons/{id}` |
-
-### 🎫 Resgates
-
-| Método | Endpoint |
-| --- | --- |
-| GET | `/redeems` |
-| GET | `/redeems/{id}` |
-| POST | `/redeems` |
-
----
-
-## 🗃️ Banco de Dados
-
-O projeto utiliza banco relacional com suporte a:
-
-- Oracle Database
-- H2 Database para testes localmente
-
-O modelo foi estruturado com JPA e relacionamentos entre entidades para garantir integridade e organização dos dados.
-
----
-
-## 📖 Swagger / OpenAPI
-
-A documentação interativa da API está disponível em:
-
-```text
-/swagger-ui/index.html
+```
+http://<IP_DA_VM>:8080/swagger
 ```
 
 ---
 
-## 🚀 Como Executar
+## 🚀 Instalação da Solução (How To)
 
-### Pré-requisitos
+### Pré-requisitos locais
 
-- Java 21
-- Maven 3.6+
+- Azure CLI autenticado (`az login`)
+- Acesso SSH à VM após criação
 
-### Execução local
+### Passo a Passo
 
-Oracle Database:
+#### 1. Executar o Script Azure CLI
+
+Salve o script abaixo como `azure-setup.sh`, dê permissão de execução e rode:
 
 ```bash
-./mvnw spring-boot:run
+chmod +x azure-setup.sh
+./azure-setup.sh
 ```
 
-H2 Database:
+O script irá: criar o Resource Group, provisionar a VM Linux, abrir a porta 8080 e instalar Docker, Git, Java 21 e Maven automaticamente.
+
+#### 2. Obter o IP público da VM
 
 ```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=h2
+az vm show \
+  --resource-group rg-petflow \
+  --name petflow-vm \
+  -d \
+  --query publicIps \
+  -o tsv
 ```
 
-> Antes de executar, ajuste as credenciais e a URL do banco no arquivo de configuração da aplicação conforme o ambiente utilizado.
+#### 3. Conectar à VM via SSH
 
-## 🧪 Testes da API
+```bash
+ssh azureuser@<IP_DA_VM>
+```
 
-Os endpoints podem ser testados com Postman, Insomnia ou outra ferramenta de API.
+#### 4. Clonar o repositório e fazer o build
 
-- Validar chamados CRUD para cada recurso
-- Verificar regras de negócio e mensagens de erro
-- Testar paginação e ordenação
-- Checar fluxo de cupons e resgates
+```bash
+git clone https://github.com/lgaxd/petflow-api-devops
+cd petflow-api-devops
+chmod +x mvnw
+./mvnw clean package -DskipTests
+```
 
-## 📄 Documentação Complementar
+#### 5. Subir os containers em background
 
-O repositório inclui:
+```bash
+docker compose up --build -d
+```
 
-- coleção exportada das requisições
-- exemplos de payloads
-- evidências de resposta dos endpoints
-- cronograma de desenvolvimento
-- diagrama de classes
-- DER
+#### 6. Verificar os containers em execução
+
+```bash
+docker ps
+docker network ls
+docker volume ls
+```
+
+#### 7. Acessar a API
+
+Acesse a documentação Swagger em:
+
+```
+http://<IP_DA_VM>:8080/swagger
+```
+
+#### 8. Verificar dados no banco H2 (opcional)
+
+```bash
+docker exec -it h2db bash
+java -cp /opt/h2/bin/h2*.jar org.h2.tools.Shell \
+  -url jdbc:h2:tcp://localhost:1521//opt/h2-data/petflowdb \
+  -user sa
+```
+
+Exemplo de consulta:
+
+```sql
+SELECT * FROM TUTOR;
+```
+
+---
+
+## 🗑️ Remoção dos Recursos na Nuvem
+
+Ao final da entrega, delete todos os recursos provisionados:
+
+```bash
+az group delete \
+  --name rg-petflow \
+  --yes \
+  --no-wait
+```
+
+---
+
+## 🎬 Demonstração em Vídeo
+
+> 📹 **Link do vídeo no YouTube:**
+>
+>
+> [🔗 Assistir no YouTube](https://www.youtube.com/watch?v=kS0g3dmm20g)
+
+O vídeo demonstra:
+- Execução do Script Azure CLI para criar a infraestrutura (Tarefa 01)
+- Funcionamento da aplicação com Docker e persistência de dados
+- Cada operação CRUD executada no banco H2 (Tarefa 02)
+
+---
 
 ## 🧭 Observações Finais
 
-Esta versão do PetFlow foi organizada para manter foco em:
+- A aplicação executa em **background** via `docker compose up -d`
+- O container roda com **usuário sem privilégios administrativos** (`lga`)
+- Os dados do banco H2 são persistidos em **volume nomeado** (`h2-data`)
+- A porta `8080` está aberta na VM Azure para testes externos
+- A documentação completa da API está disponível via Swagger em `/swagger`
 
-- consistência arquitetural
-- clareza de domínio
-- aderência aos requisitos técnicos
-- manutenção mais simples
-- apresentação objetiva do projeto
-
-Desenvolvido como parte do Challenge 2TDSPX - FIAP
+Desenvolvido como parte do Challenge — **DevOps Tools & Cloud Computing | 2TDSPX — FIAP**
